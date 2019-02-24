@@ -18,7 +18,7 @@ export class UserService {
   findById(id: string): Promise<User> {
     return this.userRepository.findOne(id)
   }
-  create(user: CreateUserDTO) {
-    return this.userRepository.insert(user)
+  create(user: CreateUserDTO): Promise<User> {
+    return this.userRepository.save(user)
   }
 }

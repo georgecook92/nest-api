@@ -2,8 +2,8 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Column({ length: 500 })
   firstName: string;
@@ -11,7 +11,7 @@ export class User {
   @Column({ length: 500 })
   lastName: string;
 
-  @Column({ length: 500 })
+  @Column({ length: 500, unique: true })
   email: string;
 
   @Column({ length: 500 })

@@ -1,10 +1,9 @@
-import { Injectable, Inject, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './user.entity';
-import { CreateUserDTO } from './create-user.dto';
-import * as bcryptjs from 'bcryptjs'
-import { LoginDTO } from './login.dto';
+
+import { User } from 'src/user/user.entity';
+import { CreateUserDTO } from 'src/auth/create-user.dto';
 
 
 @Injectable()
@@ -13,8 +12,7 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>
   ) {}
-  
-  private readonly saltRounds: number = 10
+
 
   fetchAll(): Promise<User[]> {
     return this.userRepository.find()
@@ -22,27 +20,10 @@ export class UserService {
   findById(id: string): Promise<User> {
     return this.userRepository.findOne(id)
   }
+  findByEmail(email: string): Promise<User> {
+    return this.userRepository.findOne({ email })
+  }
   create(user: CreateUserDTO): Promise<User> {
-    return this.userRepository.save({
-      ...user,
-      password: this.hashPassword(user.password)
-    })
-  }
-  async login(dto: LoginDTO): Promise<User> {
-    const user: User = await this.userRepository.findOne({ email: dto.email })
-    if (!user) throw new UnauthorizedException()
-    const match = this.comparePassword(
-      dto.password,
-      user.password
-    )
-    if (!match) throw new UnauthorizedException()
-    return user
-    
-  }
-  hashPassword(password: string): string {
-    return bcryptjs.hashSync(password, this.saltRounds)
-  }
-  comparePassword(password: string, hash: string): boolean {
-    return bcryptjs.compareSync(password, hash)
+    return this.userRepository.save(user)
   }
 }

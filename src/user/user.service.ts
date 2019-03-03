@@ -28,7 +28,7 @@ export class UserService {
       password: this.hashPassword(user.password)
     })
   }
-  async login(dto: LoginDTO): Promise<string> {
+  async login(dto: LoginDTO): Promise<User> {
     const user: User = await this.userRepository.findOne({ email: dto.email })
     if (!user) throw new UnauthorizedException()
     const match = this.comparePassword(
@@ -36,7 +36,7 @@ export class UserService {
       user.password
     )
     if (!match) throw new UnauthorizedException()
-    return 'token'
+    return user
     
   }
   hashPassword(password: string): string {

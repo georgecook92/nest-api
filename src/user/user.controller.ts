@@ -28,8 +28,9 @@ export class UserController {
   }
 
   @Post('login')
-  async login(@Body() dto: LoginDTO): Promise<string> {
+  async login(@Body() dto: LoginDTO): Promise<{ token: string }> {
      const user: User = await this.userService.login(dto)
-     return this.jwtService.sign(user)
+     const token = this.jwtService.sign({ email: user.email })
+     return { token }
   }
 }
